@@ -29,13 +29,15 @@ class Elem:
 
 DEFAULT_ELEM = Elem(material=Material.AIR, status=Status.AIR)
 
+START_POINT = Point(x=500, y=0)
+
 
 class Sand:
     def __init__(self, parent: "Cave") -> None:
         self.parent = parent
         self.d = self.parent.d
-        self.x = 500
-        self.y = 0
+        self.x = START_POINT.x
+        self.y = START_POINT.y
 
     def can_go_down(self) -> bool:
         dest = Point(x=self.x, y=self.y + 1)

@@ -30,13 +30,15 @@ class Elem:
 DEFAULT_ELEM = Elem(material=Material.AIR, status=Status.AIR)
 ROCK_ELEM = Elem(material=Material.ROCK, status=Status.REST)
 
+START_POINT = Point(x=500, y=0)
+
 
 class Sand:
     def __init__(self, parent: "Cave") -> None:
         self.parent = parent
         self.d = self.parent.d
-        self.x = 500
-        self.y = 0
+        self.x = START_POINT.x
+        self.y = START_POINT.y
 
     def can_go_down(self) -> bool:
         dest = Point(x=self.x, y=self.y + 1)
@@ -153,8 +155,9 @@ class Cave:
                 #
                 break
             #
-            self.d[Point(x=sand.x, y=sand.y)] = Elem(material=Material.SAND, status=Status.REST)
-            if sand.x == 500 and sand.y == 0:
+            point = Point(x=sand.x, y=sand.y)
+            self.d[point] = Elem(material=Material.SAND, status=Status.REST)
+            if point == START_POINT:
                 self.overflow = True
             #
             # self.show()
