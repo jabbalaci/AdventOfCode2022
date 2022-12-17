@@ -8,7 +8,7 @@ from helper import Interval, Point
 
 class Sensor:
     def __init__(self, line: str, parent: "Area") -> None:
-        self.line_y = parent.line_y
+        self.parent = parent
         parts = line.split()
         x = self.parse(parts[2])
         y = self.parse(parts[3])
@@ -23,6 +23,9 @@ class Sensor:
         self.east = Point(x=x + self.manhattan_dist, y=y)
         self.interval: Optional[Interval] = None
 
+    def reset(self) -> None:
+        self.interval = None
+
     def parse(self, s: str) -> int:
         s = s.rstrip(",:")
         parts = s.split("=")
@@ -30,14 +33,14 @@ class Sensor:
 
     def get_interval(self) -> Optional[Interval]:
         # case 1
-        if self.west.y < self.line_y <= self.south.y:
-            up_down = abs(self.line_y - self.loc.y)
+        if self.west.y < self.parent.line_y <= self.south.y:
+            up_down = abs(self.parent.line_y - self.loc.y)
             left_right = self.manhattan_dist - up_down
             p1 = Point(x=self.loc.x - left_right, y=self.loc.y + up_down)
             p2 = Point(x=self.loc.x + left_right, y=self.loc.y + up_down)
             return Interval(a=p1, b=p2)
-        elif self.west.y >= self.line_y >= self.north.y:  # case 2
-            up_down = abs(self.line_y - self.loc.y)
+        elif self.west.y >= self.parent.line_y >= self.north.y:  # case 2
+            up_down = abs(self.parent.line_y - self.loc.y)
             left_right = self.manhattan_dist - up_down
             p1 = Point(x=self.loc.x - left_right, y=self.loc.y - up_down)
             p2 = Point(x=self.loc.x + left_right, y=self.loc.y - up_down)
@@ -65,43 +68,54 @@ Sensor(x={self.loc.x}, y={self.loc.y})
 
 
 class Area:
-    def __init__(self, lines: list[str], line_y: int) -> None:
-        self.line_y = line_y
+    def __init__(self, lines: list[str], maxi: int) -> None:
+        self.maxi = maxi
         self.sensors: list[Sensor] = []
-        self.intervals: list[tuple[int, int]] = []
+        self.intervals: list[list[int]] = []
+        self.stop = False
 
         for line in lines:
             self.sensors.append(Sensor(line, self))
         #
+
+    def reset(self):
+        self.intervals = []
+        for sensor in self.sensors:
+            sensor.reset()
+
+    def set_line_y(self, line_y: int) -> None:
+        self.line_y = line_y
 
     def collect_intervals(self) -> None:
         for sensor in self.sensors:
             if sensor.interval:
                 a, b = sensor.interval
                 x1, x2 = a.x, b.x
-                self.intervals.append((x1, x2))
+                if x1 < 0:
+                    x1 = 0
+                if x2 > self.maxi:
+                    x2 = self.maxi
+                self.intervals.append([x1, x2])
             #
         #
 
+    def has_a_hole(self, intervals: list[list[int]]) -> bool:
+        total = 0
+        for a, b in intervals:
+            total += b - a + 1
+        #
+        return total < self.maxi + 1
+
     def process_intervals(self) -> None:
-        result = set()
-        for a, b in self.intervals:
-            # print(f"[{a}, {b}]")
-            for e in range(a, b + 1):
-                result.add(e)
-            #
-        #
-        for sensor in self.sensors:
-            if sensor.closest_beacon.y == self.line_y:
-                try:
-                    result.remove(sensor.closest_beacon.x)
-                except:
-                    pass
-            #
-        #
-        # print(result)
-        # print("---")
-        print(len(result))
+        result = helper.merge_intervals(self.intervals)
+        if self.has_a_hole(result):
+            print("# line:", self.line_y)
+            print(result)
+            print("---")
+            a, b = result[0]
+            answer = (b + 1) * 4_000_000 + self.line_y
+            print(answer)
+            self.stop = True
 
     def start(self) -> None:
         for sensor in self.sensors:
@@ -121,14 +135,25 @@ class Area:
 
 
 def main():
-    lines = helper.read_lines("example.txt")
-    line_y = 10
+    # lines = helper.read_lines("example.txt")
+    # maxi = 20
 
-    # lines = helper.read_lines("input.txt")
-    # line_y = 2_000_000
+    lines = helper.read_lines("input.txt")
+    maxi = 4_000_000
 
-    area = Area(lines, line_y)
-    area.start()
+    area = Area(lines, maxi)
+    # for i in range(3_214_120, maxi + 1):
+    for i in range(0, maxi + 1):
+        if i % 10_000 == 0:
+            print("# i:", i)
+        area.reset()
+        area.set_line_y(i)
+        area.start()
+        # ---
+        if area.stop:
+            break
+        #
+    #
 
 
 ##############################################################################

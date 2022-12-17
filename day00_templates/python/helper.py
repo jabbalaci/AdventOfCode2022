@@ -54,3 +54,34 @@ def powerset(iterable):
     """
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+
+
+def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:
+    """
+    Merge Overlapping Intervals
+
+    Examples:
+
+    Input: Intervals = [[1, 3], [2, 4], [6, 8], [9, 10]]
+    Output: [[1, 4], [6, 8], [9, 10]]
+
+    Input: Intervals = [[6, 8], [1, 9], [2, 4], [4, 7]]
+    Output: [[1, 9]]
+
+    from https://www.geeksforgeeks.org/merging-intervals/
+    """
+    # Sort the array on the basis of start values of intervals.
+    intervals.sort()
+    stack = []
+    # insert first interval into stack
+    stack.append(intervals[0])
+    for curr in intervals[1:]:
+        # Check for overlapping interval,
+        # if interval overlap
+        if stack[-1][0] <= curr[0] <= stack[-1][-1]:
+            stack[-1][-1] = max(stack[-1][-1], curr[-1])
+        else:
+            stack.append(curr)
+        #
+    #
+    return stack
