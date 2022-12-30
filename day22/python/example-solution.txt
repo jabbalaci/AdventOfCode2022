@@ -1,0 +1,18 @@
+        >>v#
+        .#v.
+        #.v.
+        ..v.
+...#...v..v#
+>>>v...>#.>>
+..#v...#....
+...>>>>v..#.
+        ...#....
+        .....#..
+        .#......
+        ......#.
+
+10R5L5R10L4R5L5
+
+In the above example, the final row is 6, the final column is 8,
+and the final facing is 0.
+So, the final password is 1000 * 6 + 4 * 8 + 0: 6032.
