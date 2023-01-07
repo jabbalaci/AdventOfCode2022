@@ -1,6 +1,6 @@
 import math
 from itertools import chain, combinations, zip_longest
-from typing import List, NamedTuple
+from typing import NamedTuple
 
 
 class Point(NamedTuple):
@@ -18,18 +18,18 @@ def read(fname: str) -> str:
         return f.read()
 
 
-def read_lines(fname: str) -> List[str]:
+def read_lines(fname: str) -> list[str]:
     with open(fname) as f:
         return f.read().strip().splitlines()
 
 
-def read_lines_as_ints(fname: str) -> List[int]:
+def read_lines_as_ints(fname: str) -> list[int]:
     return [int(s) for s in read_lines(fname)]
 
 
 def angle(a: Point, b: Point, c: Point) -> float:
     """
-    from https://medium.com/@manivannan_data/find-the-angle-between-three-points-from-2d-using-python-348c513e2cd
+    from https://bit.ly/3ZgLmay
     """
     ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
     return ang + 360 if ang < 0 else ang
