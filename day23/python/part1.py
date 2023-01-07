@@ -141,7 +141,7 @@ class Elf:
         else:  # if direction == Direction.NOTHING
             pass
 
-    def discover_possible_movement(self) -> None:
+    def discover_possible_movement(self) -> None:  # noqa
         if self.are_all_these_positions_free(self.get_8_neighbors()):
             self.set_proposed_direction(Direction.NOTHING)
             return
@@ -230,7 +230,7 @@ class Area:
             #
             if DEBUG:
                 print(f"End of round {i+1}:")
-                print(f"===========")
+                print("===========")
                 self.show_map()
                 # self.show_locations()
                 print(self.get_result())
