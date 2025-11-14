@@ -1,0 +1,7 @@
+{
+    "name": "part1",
+    "targetType": "executable",
+    "sourceFiles": [
+        "part1.d"
+    ]
+}
